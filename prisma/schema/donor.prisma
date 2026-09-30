@@ -1,0 +1,17 @@
+model Donor {
+  id              String     @id @default(uuid())
+  userId          String     @unique
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bloodGroup      BloodGroup
+  district        String
+  area            String
+  isAvailable     Boolean    @default(true)
+  lastDonatedDate DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  // Relations
+  reviews Review[]
+
+  @@map("donors")
+}

@@ -1,0 +1,18 @@
+model User {
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  password    String
+  phoneNumber String?
+  role        Role     @default(USER)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  donorProfile  Donor?
+  bloodRequests BloodRequest[] @relation("UserBloodRequests")
+  payments      Payment[]
+  reviews       Review[]
+
+  @@map("users")
+}
