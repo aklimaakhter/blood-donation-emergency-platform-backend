@@ -178,9 +178,6 @@ const getMe = async (user: IRequestUser) => {
         where: {
             id: user.userId,
         },
-        // include: {
-        //     patient: true,
-        // },
         omit: {
             password: true,
         },

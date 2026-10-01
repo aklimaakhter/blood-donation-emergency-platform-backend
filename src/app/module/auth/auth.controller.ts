@@ -32,7 +32,6 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
             accessToken,
             refreshToken,
             user,
-            // patient,
         },
     })
 })
