@@ -10,6 +10,17 @@ enum UserStatus {
   DELETED
 }
 
+enum DonorStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AuthProvider {
+  GOOGLE
+  CREDENTIAL
+}
+
 enum BloodGroup {
   A_POSITIVE // A+
   A_NEGATIVE // A-

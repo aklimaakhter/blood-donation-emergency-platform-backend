@@ -1,121 +1,179 @@
-import { Request, Response } from 'express'
-import httpStatus from 'http-status'
-import { catchAsync } from '../../utils/catchAsync'
-import { sendResponse } from '../../utils/sendResponse'
-import { IRequestUser } from './auth.interface'
-import { AuthService } from './auth.service'
+import type { Request, Response } from "express";
+import httpStatus from "http-status";
+import config from "../../config";
+import { AppError } from "../../utils/AppError";
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
+import type { IRequestUser } from "./auth.interface";
+import { AuthService } from "./auth.service";
+
+const isProduction = config.node_env === "production";
+
+const accessTokenCookieOptions = {
+	httpOnly: true,
+	secure: isProduction,
+	sameSite: isProduction ? ("none" as const) : ("lax" as const),
+	maxAge: 1000 * 60 * 60 * 24,
+};
+
+const refreshTokenCookieOptions = {
+	httpOnly: true,
+	secure: isProduction,
+	sameSite: isProduction ? ("none" as const) : ("lax" as const),
+	maxAge: 1000 * 60 * 60 * 24 * 7,
+};
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
-    const payload = req.body
-    const result = await AuthService.registerUser(payload)
+	const payload = req.body;
 
-    const { accessToken, refreshToken, user } = result
+	const result = await AuthService.registerUser(payload);
 
-    res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 // 24 hour or 1 day
-    })
-    res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
-    })
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "Email verification OTP sent successfully",
+		data: result,
+	});
+});
 
-    sendResponse(res, {
-        statusCode: httpStatus.CREATED,
-        success: true,
-        message: 'Patient registered successfully',
-        data: {
-            accessToken,
-            refreshToken,
-            user,
-        },
-    })
-})
+const verifyUserEmail = catchAsync(async (req: Request, res: Response) => {
+	const payload = req.body;
+
+	const result = await AuthService.verifyUserEmail(payload);
+	const { accessToken, refreshToken, user } = result;
+
+	res.cookie("accessToken", accessToken, accessTokenCookieOptions);
+	res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
+
+	sendResponse(res, {
+		statusCode: httpStatus.CREATED,
+		success: true,
+		message: "Email verified successfully.",
+		data: {
+			accessToken,
+			refreshToken,
+			user,
+		},
+	});
+});
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
-    const payload = req.body
-    const result = await AuthService.loginUser(payload)
-    const { accessToken, refreshToken } = result
+	const payload = req.body;
 
-    res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 // 24 hour or 1 day
-    })
-    res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
-    })
+	const result = await AuthService.loginUser(payload);
+	const { accessToken, refreshToken } = result;
 
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'User logged in successfully',
-        data: {
-            accessToken,
-            refreshToken
-        },
-    })
-})
+	res.cookie("accessToken", accessToken, accessTokenCookieOptions);
+	res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "User logged in successfully",
+		data: {
+			accessToken,
+			refreshToken,
+		},
+	});
+});
 
 const getMe = catchAsync(async (req: Request, res: Response) => {
-    const user = req.user as unknown as IRequestUser
+	const user = req.user as unknown as IRequestUser;
 
-    if (!user) {
-        throw new Error('User information is missing in the request')
-    }
+	if (!user) {
+		throw new AppError(
+			httpStatus.UNAUTHORIZED,
+			"Unauthorized access. User information is missing",
+		);
+	}
 
-    const result = await AuthService.getMe(user)
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'User profile fetched successfully',
-        data: result,
-    })
-})
+	const result = await AuthService.getMe(user);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "User profile fetched successfully",
+		data: result,
+	});
+});
 
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
-    if (!req.cookies.refreshToken) {
-        throw new Error('Refresh token is missing')
-    }
-    const result = await AuthService.refreshToken(req.cookies.refreshToken)
-    const { accessToken, refreshToken: newRefreshToken } = result
+	const token = req.cookies.refreshToken;
 
-    res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 // 24 hour or 1 day
-    })
-    res.cookie("refreshToken", newRefreshToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
-    })
+	if (!token) {
+		throw new AppError(httpStatus.UNAUTHORIZED, "Refresh token is missing");
+	}
 
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'New tokens generated successfully',
-        data: {
-            accessToken,
-            refreshToken: newRefreshToken,
-        },
-    })
-})
+	const result = await AuthService.refreshToken(token);
+	const { accessToken, refreshToken: newRefreshToken } = result;
 
+	res.cookie("accessToken", accessToken, accessTokenCookieOptions);
+	res.cookie("refreshToken", newRefreshToken, refreshTokenCookieOptions);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "New tokens generated successfully",
+		data: {
+			accessToken,
+			refreshToken: newRefreshToken,
+		},
+	});
+});
+
+const googleLogin = catchAsync(async (req: Request, res: Response) => {
+	const payload = req.body;
+
+	const result = await AuthService.googleLogin(payload);
+	const { accessToken, refreshToken } = result;
+
+	res.cookie("accessToken", accessToken, accessTokenCookieOptions);
+	res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "Google login successfully",
+		data: {
+			accessToken,
+			refreshToken,
+		},
+	});
+});
+
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+	const payload = req.body;
+
+	const result = await AuthService.forgotPassword(payload);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: `Password reset OTP sent to: ${payload.email}`,
+		data: result,
+	});
+});
+
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+	const payload = req.body;
+
+	const result = await AuthService.resetPassword(payload);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "Password changed successfully",
+		data: result,
+	});
+});
 
 export const AuthController = {
-    registerUser,
-    loginUser,
-    getMe,
-    refreshToken,
-}
+	registerUser,
+	verifyUserEmail,
+	loginUser,
+	getMe,
+	refreshToken,
+	googleLogin,
+	forgotPassword,
+	resetPassword,
+};
