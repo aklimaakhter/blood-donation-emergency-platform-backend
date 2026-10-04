@@ -1,7 +1,8 @@
 import bcrypt from 'bcryptjs'
 import { JwtPayload, SignOptions } from 'jsonwebtoken'
 import config from '../../config'
-import { prisma } from '../../lib/prisma'
+import { prisma } from '../../lib/prisma';
+import httpStatus from "http-status"
 import { jwtUtils } from '../../utils/jwt'
 import {
     ILoginUserPayload,
@@ -9,6 +10,7 @@ import {
     IRequestUser
 } from './auth.interface'
 import { Role, UserStatus } from '../../../../generated/prisma/enums'
+import { AppError } from '../../utils/AppError';
 
 
 // const registerUser = async (payload: IRegisterPatientPayload) => {
@@ -78,7 +80,7 @@ const registerUser = async (payload: IRegisterPatientPayload) => {
   })
 
   if (isUserExists) {
-    throw new Error('User with this email already exists')
+    throw new AppError(httpStatus.CONFLICT, 'User with this email already exists')
   }
 
   const hashedPassword = await bcrypt.hash(password, 8)
@@ -131,7 +133,7 @@ const loginUser = async (payload: ILoginUserPayload) => {
     })
 
     if (!user) {
-        throw new Error('User not found')
+        throw new AppError(httpStatus.NOT_FOUND,'User not found')
     }
 
     if (user.status === UserStatus.BLOCKED) {
