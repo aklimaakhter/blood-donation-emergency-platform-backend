@@ -27,6 +27,8 @@ import type {
 	IVerifyUserPayload,
 } from "./auth.interface";
 
+console.log("Loaded Google Client ID:", config.google_client_id);
+
 const registerUser = async (payload: IRegisterUserPayload) => {
 	const { name, password } = payload;
 	const email = payload.email.trim().toLowerCase();
@@ -149,7 +151,7 @@ const verifyUserEmail = async (payload: IVerifyUserPayload) => {
 
 	const templatePath = path.join(
 		process.cwd(),
-		"src/app/templates/welcome-email.ejs",
+		"src/app/templates/user-welcome-email.ejs",
 	);
 
 	const templateData = {
@@ -338,6 +340,7 @@ const googleLogin = async (payload: IGoogleLoginPayload) => {
 
 		googleIdTokenPayload = ticket.getPayload();
 	} catch (error) {
+		console.error("GOOGLE AUTH ERROR DETAILED:", error);
 		throw new AppError(
 			httpStatus.UNAUTHORIZED,
 			"Invalid or Expired Google ID token",
