@@ -17,7 +17,7 @@ router.post(
 
 
 router.post(
-  "/pay",
+  "/pay-payment",
   auth(Role.USER, Role.DONOR, Role.ADMIN),
   validateRequest(PaymentValidation.payPaymentSchema),
   PaymentController.payPayment

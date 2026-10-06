@@ -1,17 +1,19 @@
 import { z } from "zod";
 
 const createPaymentSchema = z.object({
-  amount: z.string("Amount is required" ),
-    reason: z.string().optional()
+  amount: z.number({ message: "Amount is required" }),
+  reason: z.string().optional(),
 });
 
 const payPaymentSchema = z.object({
-  paymentId: z.string("Payment ID is required"),
+  paymentId: z.string({ message: "Payment ID is required" }),
+  amount: z.number().optional(),
+  payerReference: z.string().optional(),
 });
 
 const cancelPaymentSchema = z.object({
-  paymentId: z.string("Payment ID is required"),
-    reason: z.string().optional(),
+  paymentId: z.string({ message: "Payment ID is required" }),
+  reason: z.string().optional(),
 });
 
 export const PaymentValidation = {

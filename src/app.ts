@@ -9,6 +9,7 @@ import { AuthRoutes } from "./app/module/auth/auth.route";
 import { DonorRoutes } from "./app/module/donor/donor.route";
 import { UserRoutes } from "./app/module/user/user.route";
 import { BloodRequestRoutes } from "./app/module/bloodRequest/bloodRequest.route";
+import { PaymentRoutes } from "./app/module/payment/payment.route";
 
 const app: Application = express();
 
@@ -30,6 +31,7 @@ app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/user", UserRoutes);
 app.use("/api/v1/donor", DonorRoutes);
 app.use("/api/v1/blood-request", BloodRequestRoutes);
+app.use("/api/v1/payments", PaymentRoutes);
 
 
 app.get("/", async (req: Request, res: Response) => {
