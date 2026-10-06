@@ -1,15 +1,35 @@
+enum UrgencyLevel {
+  HIGH
+  EMERGENCY
+  NORMAL
+}
+
 model BloodRequest {
   id              String        @id @default(uuid())
   requesterId     String
   requester       User          @relation("UserBloodRequests", fields: [requesterId], references: [id], onDelete: Cascade)
+  
+
+  donorId         String?
+  donor           Donor?        @relation(fields: [donorId], references: [id], onDelete: SetNull)
+
   patientName     String
   bloodGroup      BloodGroup
+  
+ 
+  district        String
+  area            String
   hospitalName    String
   hospitalAddress String
+  
   bagsNeeded      Int           @default(1)
+  urgency         UrgencyLevel  @default(NORMAL) 
   status          RequestStatus @default(PENDING)
+  
   dateOfDonation  DateTime
   contactNumber   String
+  reason          String?       
+
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 

@@ -7,7 +7,9 @@ import { Role } from '../../../../generated/prisma/enums';
 
 const router = express.Router();
 
+
 router.get('/', DonorController.getAllDonors);
+
 
 router.post(
   '/apply',
@@ -19,7 +21,7 @@ router.post(
 
 router.get(
   '/me',
-  auth(Role.DONOR, Role.ADMIN),
+  auth(Role.USER, Role.DONOR, Role.ADMIN),
   DonorController.getMyDonorProfile
 );
 
@@ -29,6 +31,21 @@ router.patch(
   auth(Role.DONOR),
   validateRequest(DonorValidation.updateDonorSchema),
   DonorController.updateMyDonorProfile
+);
+
+
+router.get(
+  '/applications',
+  auth(Role.ADMIN),
+  DonorController.getAllDonorApplications
+);
+
+
+router.patch(
+  '/:id/status',
+  auth(Role.ADMIN),
+  validateRequest(DonorValidation.updateDonorStatusSchema),
+  DonorController.updateDonorStatus
 );
 
 export const DonorRoutes = router;

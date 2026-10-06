@@ -51,9 +51,36 @@ const updateMyDonorProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateDonorStatus = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  const result = await DonorService.updateDonorStatus(id as string, status);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: `Donor application status updated to ${status}`,
+    data: result,
+  });
+});
+
+const getAllDonorApplications = catchAsync(async (req: Request, res: Response) => {
+  const status = req.query.status as any;
+  const result = await DonorService.getAllDonorApplications(status);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Donor applications retrieved successfully',
+    data: result,
+  });
+});
+
 export const DonorController = {
   applyForDonor,
   getAllDonors,
   getMyDonorProfile,
   updateMyDonorProfile,
+  updateDonorStatus,
+  getAllDonorApplications,
 };

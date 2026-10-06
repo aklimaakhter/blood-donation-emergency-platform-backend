@@ -1,4 +1,3 @@
-
 import { Donor, DonorStatus, Prisma } from '../../../../generated/prisma/browser';
 import { prisma } from '../../lib/prisma';
 import { AppError } from '../../utils/AppError';
@@ -51,7 +50,9 @@ const getAllDonors = async (filters: IDonorFilterRequest) => {
   if (bloodGroup) andConditions.push({ bloodGroup });
   if (district) andConditions.push({ district: { equals: district, mode: 'insensitive' } });
   if (area) andConditions.push({ area: { equals: area, mode: 'insensitive' } });
-  if (isAvailable !== undefined) andConditions.push({ isAvailable });
+  if (isAvailable !== undefined) {
+  andConditions.push({ isAvailable: isAvailable === true });
+}
 
   const whereConditions: Prisma.DonorWhereInput =
     andConditions.length > 0 ? { AND: andConditions } : {};
@@ -81,6 +82,7 @@ const getMyDonorProfile = async (userId: string): Promise<Donor> => {
     include: {
       user: {
         select: {
+          id: true,
           name: true,
           email: true,
           phoneNumber: true,
@@ -91,7 +93,7 @@ const getMyDonorProfile = async (userId: string): Promise<Donor> => {
   });
 
   if (!result) {
-    throw new AppError(4404, 'Donor profile not found');
+    throw new AppError(404, 'Donor profile not found');
   }
 
   return result;
@@ -121,9 +123,66 @@ const updateMyDonorProfile = async (
   return result;
 };
 
+// 5. Admin: Approve or Reject Donor Request
+const updateDonorStatus = async (donorId: string, status: DonorStatus) => {
+  const donor = await prisma.donor.findUnique({
+    where: { id: donorId },
+  });
+
+  if (!donor) {
+    throw new AppError(404, 'Donor request not found');
+  }
+
+  // Use transaction to update status & upgrade user role to DONOR if approved
+  const result = await prisma.$transaction(async (tx) => {
+    const updatedDonor = await tx.donor.update({
+      where: { id: donorId },
+      data: { status },
+    });
+
+    if (status === DonorStatus.APPROVED) {
+      await tx.user.update({
+        where: { id: donor.userId },
+        data: { role: 'DONOR' },
+      });
+    }
+
+    return updatedDonor;
+  });
+
+  return result;
+};
+
+// 6. Admin: Get All Donor Applications (Pending, Approved, Rejected)
+const getAllDonorApplications = async (status?: DonorStatus) => {
+  const whereConditions: Prisma.DonorWhereInput = status ? { status } : {};
+
+  const result = await prisma.donor.findMany({
+    where: whereConditions,
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phoneNumber: true,
+          imageUrl: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  return result;
+};
+
 export const DonorService = {
   applyForDonor,
   getAllDonors,
   getMyDonorProfile,
   updateMyDonorProfile,
+  updateDonorStatus,
+  getAllDonorApplications,
 };
