@@ -28,7 +28,9 @@ model BloodRequest {
   
   dateOfDonation  DateTime
   contactNumber   String
-  reason          String?       
+  reason          String?   
+
+  payment         Payment?
 
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt

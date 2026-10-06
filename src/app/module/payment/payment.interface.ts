@@ -1,16 +1,16 @@
 import { PaymentStatus } from "../../../../generated/prisma/enums";
 
-
-export type ICreatePaymentInput = {
-  amount: number;
+export interface ICreatePaymentInput {
+  amount: number | string;
+  bloodRequestId?: string;
   payerReference?: string;
-};
+}
 
-
-export type IPayPaymentInput = {
+export interface IPayPaymentInput {
   paymentId: string;
-};
-
+  amount?: number | string;
+  payerReference?: string;
+}
 
 export type IPayment = {
   id: string;

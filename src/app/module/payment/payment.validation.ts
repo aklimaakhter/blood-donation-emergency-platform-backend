@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const createPaymentSchema = z.object({
   amount: z.number({ message: "Amount is required" }),
+  bloodRequestId: z.string().optional(),
   reason: z.string().optional(),
 });
 
