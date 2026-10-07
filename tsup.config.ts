@@ -1,11 +1,17 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: { index: "src/vercel.ts" },
+  entry: ["src/server.ts"],
   format: ["esm"],
+  target: ["esnext"],
   platform: "node",
-  target: "node20",
-  outDir: "api",
+  outDir: "dist",
   bundle: true,
-  external: ["pg-native"],
+  minify: true,
+  banner: {
+    js: /* ts */ `
+   import { createRequire } from 'module';
+   const require = createRequire(import.meta.url);
+    `,
+  },
 });
