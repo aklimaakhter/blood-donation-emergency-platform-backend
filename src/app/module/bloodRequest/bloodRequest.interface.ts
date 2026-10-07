@@ -1,4 +1,7 @@
-import type { BloodGroup, RequestStatus } from "../../../../generated/prisma/enums";
+import type {
+	BloodGroup,
+	RequestStatus,
+} from "../../../../generated/prisma/enums";
 
 export type IBloodRequestFilterRequest = {
 	searchTerm?: string;

@@ -1,4 +1,7 @@
-import type { Prisma, BloodRequest } from "../../../../generated/prisma/browser";
+import type {
+	Prisma,
+	BloodRequest,
+} from "../../../../generated/prisma/browser";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/AppError";
 import httpStatus from "http-status";

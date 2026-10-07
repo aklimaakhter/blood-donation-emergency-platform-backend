@@ -4,7 +4,10 @@ import config from "../../config";
 import { getBkashIdToken } from "../../lib/bkash";
 import { prisma } from "../../lib/prisma";
 import type { RequestUser } from "../../middleware/checkAuth";
-import type { ICreatePaymentInput, IPayPaymentInput } from "./payment.interface";
+import type {
+	ICreatePaymentInput,
+	IPayPaymentInput,
+} from "./payment.interface";
 
 const createPayment = async (
 	payload: ICreatePaymentInput,
