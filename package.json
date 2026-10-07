@@ -7,7 +7,7 @@
   "scripts": {
   "seed": "tsx src/app/utils/seed.ts",
   "dev": "tsx watch src/server.ts",
-  "build": "prisma generate && tsup src/server.ts --format esm --platform node --target node20 --outDir api --external pg-native",
+  "build": "prisma generate && tsup src/index.ts --format esm --platform node --target node20 --outDir api --external pg-native",
   "postinstall": "prisma generate",
   "vercel-build": "prisma generate && tsup",
   "start": "node dist/server.js",
