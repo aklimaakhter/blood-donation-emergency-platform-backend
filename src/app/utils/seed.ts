@@ -46,5 +46,10 @@ export const seedTesterAdmin = async () => {
 	} catch (error) {
 		console.log("Error seeding tester admin: ", error);
 
+		await prisma.user.delete({
+			where: {
+				email: config.tester_admin_email,
+			},
+		});
 	}
 };
