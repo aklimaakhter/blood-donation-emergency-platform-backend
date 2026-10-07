@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import type { RequestUser } from "../../middleware/checkAuth";
+import { ICreateReviewInput } from "./review.interface";
 
 const createReview = async (payload: ICreateReviewInput, user: RequestUser) => {
 	const donor = await prisma.donor.findUnique({
