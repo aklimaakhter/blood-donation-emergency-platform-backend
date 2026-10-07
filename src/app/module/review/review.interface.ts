@@ -1,6 +1,5 @@
 interface ICreateReviewInput {
-  donorId: string;
-  rating: number;
-  comment?: string;
+	donorId: string;
+	rating: number;
+	comment?: string;
 }
-

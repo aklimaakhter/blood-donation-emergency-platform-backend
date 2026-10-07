@@ -7,30 +7,26 @@ import { PaymentControllers } from "./payment.controller";
 
 const router = Router();
 
-
 router.post(
-  "/create",
-  auth(Role.USER, Role.DONOR, Role.ADMIN),
-  validateRequest(PaymentValidation.createPaymentSchema),
-  PaymentControllers.createPayment
+	"/create",
+	auth(Role.USER, Role.DONOR, Role.ADMIN),
+	validateRequest(PaymentValidation.createPaymentSchema),
+	PaymentControllers.createPayment,
 );
 
-
 router.post(
-  "/pay-payment",
-  auth(Role.USER, Role.DONOR, Role.ADMIN),
-  validateRequest(PaymentValidation.payPaymentSchema),
-  PaymentControllers.payPayment
+	"/pay-payment",
+	auth(Role.USER, Role.DONOR, Role.ADMIN),
+	validateRequest(PaymentValidation.payPaymentSchema),
+	PaymentControllers.payPayment,
 );
-
 
 router.get("/bkash/callback", PaymentControllers.bkashCallback);
 
-
 router.get(
-  "/my-payments",
-  auth(Role.USER, Role.DONOR, Role.ADMIN),
-  PaymentControllers.getMyPayments
+	"/my-payments",
+	auth(Role.USER, Role.DONOR, Role.ADMIN),
+	PaymentControllers.getMyPayments,
 );
 
 export const PaymentRoutes = router;

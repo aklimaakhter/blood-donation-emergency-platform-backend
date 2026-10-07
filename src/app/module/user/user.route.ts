@@ -6,12 +6,11 @@ import { UserController } from "./user.controller";
 
 const router = Router();
 
-
 router.patch(
-  "/profile-image",
-  auth(Role.ADMIN, Role.DONOR, Role.USER),
-  upload.single("profile-image"),
-  UserController.uploadProfileImage
+	"/profile-image",
+	auth(Role.ADMIN, Role.DONOR, Role.USER),
+	upload.single("profile-image"),
+	UserController.uploadProfileImage,
 );
 
 export const UserRoutes = router;

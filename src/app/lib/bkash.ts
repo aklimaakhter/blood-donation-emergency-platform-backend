@@ -9,7 +9,7 @@ export const getBkashIdToken = async () => {
 		let bkashIdToken = await redisClient.get(IdTokenKey);
 		const bkashIdTokenTTL = await redisClient.ttl(IdTokenKey);
 
-		let bkashRefreshToken = await redisClient.get(RefreshTokenKey);
+		const bkashRefreshToken = await redisClient.get(RefreshTokenKey);
 		const bkashRefreshTokenTTL = await redisClient.ttl(RefreshTokenKey);
 
 		if (

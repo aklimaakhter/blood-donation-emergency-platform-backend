@@ -15,8 +15,7 @@ const UserRegistrationZodSchema = z.object({
 		.regex(/[0-9]/, { message: "Password must contain at least one number" })
 		.regex(/[^A-Za-z0-9]/, {
 			message: "Password must contain at least one special character",
-		})
-	
+		}),
 });
 
 const UserVerifyEmailZodSchema = z.object({

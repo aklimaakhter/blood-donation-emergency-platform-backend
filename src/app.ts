@@ -1,6 +1,6 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express, { Application, Request, Response } from "express";
+import express, { type Application, type Request, type Response } from "express";
 import httpStatus from "http-status";
 import config from "./app/config";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
@@ -22,9 +22,7 @@ app.use(
 	}),
 );
 
-
 app.use(express.urlencoded({ extended: true }));
-
 
 app.use(express.json());
 app.use(cookieParser());
@@ -36,7 +34,6 @@ app.use("/api/v1/blood-request", BloodRequestRoutes);
 app.use("/api/v1/payments", PaymentRoutes);
 app.use("/api/v1/review", ReviewRoutes);
 app.use("/api/v1/admin", AdminRoutes);
-
 
 app.get("/", async (req: Request, res: Response) => {
 	res.status(httpStatus.OK).json({

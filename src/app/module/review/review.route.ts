@@ -4,14 +4,13 @@ import { ReviewValidation } from "./review.validation";
 import { auth } from "../../middleware/checkAuth";
 import { validateRequest } from "../../middleware/validationRequest";
 
-
 const router = Router();
 
 router.post(
-  "/",
-  auth(),
-  validateRequest(ReviewValidation.createReviewValidation),
-  ReviewControllers.createReview
+	"/",
+	auth(),
+	validateRequest(ReviewValidation.createReviewValidation),
+	ReviewControllers.createReview,
 );
 
 router.get("/", ReviewControllers.getAllReviews);
