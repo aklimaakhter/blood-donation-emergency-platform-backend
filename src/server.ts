@@ -1,4 +1,4 @@
-import app from "./app";
+import app from "./app.js";
 import { prisma } from "./app/lib/prisma";
 import config from "./app/config";
 import { seedTesterAdmin } from "./app/utils/seed";
