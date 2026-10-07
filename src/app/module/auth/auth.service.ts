@@ -27,7 +27,6 @@ import type {
 	IVerifyUserPayload,
 } from "./auth.interface";
 
-console.log("Loaded Google Client ID:", config.google_client_id);
 
 const registerUser = async (payload: IRegisterUserPayload) => {
 	const { name, password } = payload;
