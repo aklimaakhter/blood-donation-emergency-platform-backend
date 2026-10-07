@@ -7,7 +7,7 @@ import { ICreateDonorInput, IDonorFilterRequest, IUpdateDonorProfileInput } from
 import config from "../../config";
 import { transporter } from "../../lib/nodemailer";
 
-// 1. User applies to become a Donor
+
 const applyForDonor = async (
   userId: string,
   payload: ICreateDonorInput
@@ -17,7 +17,34 @@ const applyForDonor = async (
   });
 
   if (existingDonor) {
-    throw new AppError(400, 'You have already applied or registered as a donor');
+   
+    if (existingDonor.status === DonorStatus.APPROVED) {
+      throw new AppError(400, 'You are already an approved donor');
+    }
+    if (existingDonor.status === DonorStatus.PENDING) { 
+      throw new AppError(400, 'Your donor application is already pending review');
+    }
+
+   
+    if (existingDonor.status === DonorStatus.REJECTED) {
+      const rejectedTime = new Date(existingDonor.updatedAt).getTime();
+      const currentTime = new Date().getTime();
+      const hoursPassed = (currentTime - rejectedTime) / (1000 * 60 * 60);
+      const COOLDOWN_HOURS = 24; 
+
+      if (hoursPassed < COOLDOWN_HOURS) {
+        const remainingHours = Math.ceil(COOLDOWN_HOURS - hoursPassed);
+        throw new AppError(
+          400,
+          `Your previous application was rejected. You can apply again after ${remainingHours} hours.`
+        );
+      } else {
+        
+        await prisma.donor.delete({
+          where: { userId },
+        });
+      }
+    }
   }
 
   const result = await prisma.donor.create({
@@ -34,11 +61,11 @@ const applyForDonor = async (
   return result;
 };
 
-// 2. Public Search for Approved Donors
+
 const getAllDonors = async (filters: IDonorFilterRequest) => {
   const { searchTerm, bloodGroup, district, area, isAvailable } = filters;
   const andConditions: Prisma.DonorWhereInput[] = [
-    { status: DonorStatus.APPROVED }, // Only show approved donors publicly
+    { status: DonorStatus.APPROVED }, 
   ];
 
   if (searchTerm) {
@@ -79,7 +106,7 @@ const getAllDonors = async (filters: IDonorFilterRequest) => {
   return result;
 };
 
-// 3. Get Logged-in Donor Profile
+
 const getMyDonorProfile = async (userId: string): Promise<Donor> => {
   const result = await prisma.donor.findUnique({
     where: { userId },
@@ -103,7 +130,7 @@ const getMyDonorProfile = async (userId: string): Promise<Donor> => {
   return result;
 };
 
-// 4. Update Logged-in Donor Profile
+
 const updateMyDonorProfile = async (
   userId: string,
   payload: IUpdateDonorProfileInput
@@ -127,35 +154,6 @@ const updateMyDonorProfile = async (
   return result;
 };
 
-// 5. Admin: Approve or Reject Donor Request
-// const updateDonorStatus = async (donorId: string, status: DonorStatus) => {
-//   const donor = await prisma.donor.findUnique({
-//     where: { id: donorId },
-//   });
-
-//   if (!donor) {
-//     throw new AppError(404, 'Donor request not found');
-//   }
-
-//   // Use transaction to update status & upgrade user role to DONOR if approved
-//   const result = await prisma.$transaction(async (tx) => {
-//     const updatedDonor = await tx.donor.update({
-//       where: { id: donorId },
-//       data: { status },
-//     });
-
-//     if (status === DonorStatus.APPROVED) {
-//       await tx.user.update({
-//         where: { id: donor.userId },
-//         data: { role: 'DONOR' },
-//       });
-//     }
-
-//     return updatedDonor;
-//   });
-
-//   return result;
-// };
 
 const updateDonorStatus = async (donorId: string, status: DonorStatus) => {
   const donor = await prisma.donor.findUnique({
@@ -175,7 +173,7 @@ const updateDonorStatus = async (donorId: string, status: DonorStatus) => {
     throw new AppError(404, 'Donor request not found');
   }
 
-  // ট্রানজ্যাকশনের মাধ্যমে স্ট্যাটাস আপডেট এবং রোল পরিবর্তন
+ 
   const result = await prisma.$transaction(async (tx) => {
     const updatedDonor = await tx.donor.update({
       where: { id: donorId },
@@ -192,7 +190,7 @@ const updateDonorStatus = async (donorId: string, status: DonorStatus) => {
     return updatedDonor;
   });
 
-  // স্ট্যাটাস APPROVED হলে ইমেল পাঠানোর লজিক
+  
   if (status === DonorStatus.APPROVED && donor.user?.email) {
     try {
       const templatePath = path.join(
@@ -215,14 +213,14 @@ const updateDonorStatus = async (donorId: string, status: DonorStatus) => {
       });
     } catch (error) {
       console.error("Failed to send donor approval email:", error);
-      // ইমেল সেন্ড করতে কোনো কারণে ফেইল করলেও যেন মূল API রিকোয়েস্ট আটকে না যায়
+     
     }
   }
 
   return result;
 };
 
-// 6. Admin: Get All Donor Applications (Pending, Approved, Rejected)
+
 const getAllDonorApplications = async (status?: DonorStatus) => {
   const whereConditions: Prisma.DonorWhereInput = status ? { status } : {};
 

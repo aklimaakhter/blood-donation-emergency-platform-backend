@@ -7,9 +7,7 @@ import { Role } from '../../../../generated/prisma/enums';
 
 const router = express.Router();
 
-
 router.get('/', DonorController.getAllDonors);
-
 
 router.post(
   '/apply',
@@ -17,7 +15,6 @@ router.post(
   validateRequest(DonorValidation.createDonorSchema),
   DonorController.applyForDonor
 );
-
 
 router.get(
   '/me',

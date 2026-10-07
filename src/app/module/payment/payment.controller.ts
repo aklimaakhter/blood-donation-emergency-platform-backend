@@ -29,7 +29,7 @@ const payPayment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// Direct Browser Redirect to Frontend (port 3000)
+
 const bkashCallback = catchAsync(async (req: Request, res: Response) => {
   const result = await PaymentServices.bkashCallback(req.query);
   return res.redirect(result.redirectUrl);

@@ -1,13 +1,8 @@
 import { prisma } from "../../lib/prisma";
 import { RequestUser } from "../../middleware/checkAuth";
 
-interface ICreateReviewInput {
-  donorId: string;
-  rating: number;
-  comment?: string;
-}
 
-// Create a review for a donor
+
 const createReview = async (payload: ICreateReviewInput, user: RequestUser) => {
   const donor = await prisma.donor.findUnique({
     where: { id: payload.donorId },
@@ -43,7 +38,7 @@ const createReview = async (payload: ICreateReviewInput, user: RequestUser) => {
   return review;
 };
 
-// Get all reviews (Platform-wide)
+
 const getAllReviews = async () => {
   return await prisma.review.findMany({
     include: {
@@ -60,7 +55,7 @@ const getAllReviews = async () => {
   });
 };
 
-// Get reviews for a specific donor
+
 const getDonorReviews = async (donorId: string) => {
   return await prisma.review.findMany({
     where: { donorId },

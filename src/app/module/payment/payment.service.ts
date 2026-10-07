@@ -8,8 +8,6 @@ import { RequestUser } from "../../middleware/checkAuth";
 import { ICreatePaymentInput, IPayPaymentInput } from "./payment.interface";
 
 
-
-
 const createPayment = async (
   payload: ICreatePaymentInput,
   user: RequestUser

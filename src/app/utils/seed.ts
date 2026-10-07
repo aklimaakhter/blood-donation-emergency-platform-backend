@@ -5,14 +5,14 @@ import bcrypt from "bcryptjs";
 
 export const seedTesterAdmin = async () => {
 	try {
-		const isTesterAdminExits = await prisma.user.findUnique({
+		const isTesterAdminExists = await prisma.user.findUnique({
 			where: {
 				email: config.tester_admin_email,
 			},
 		});
 
-		if (isTesterAdminExits) {
-			console.log("Tester Admin already exits.");
+		if (isTesterAdminExists) {
+			console.log("Tester Admin already exists.");
 			return;
 		}
 

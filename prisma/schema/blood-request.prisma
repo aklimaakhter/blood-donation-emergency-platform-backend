@@ -1,9 +1,3 @@
-enum UrgencyLevel {
-  HIGH
-  EMERGENCY
-  NORMAL
-}
-
 model BloodRequest {
   id              String        @id @default(uuid())
   requesterId     String

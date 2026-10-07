@@ -4,6 +4,8 @@ import config from "./app/config";
 import { seedTesterAdmin } from "./app/utils/seed";
 import { redisClient } from "./app/lib/redis";
 import { transporter } from "./app/lib/nodemailer";
+import { deleteRejectedDonors } from "./app/lib/cron";
+
 
 const PORT = config.port;
 
@@ -19,6 +21,8 @@ async function main() {
 		console.log("Nodemailer connected successfully.");
 
 		await seedTesterAdmin();
+
+		await deleteRejectedDonors();
 
 		app.listen(PORT, () => {
 			console.log(`Server is running on port ${PORT}`);

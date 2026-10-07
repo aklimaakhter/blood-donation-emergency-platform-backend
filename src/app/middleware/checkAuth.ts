@@ -42,7 +42,7 @@ export const auth = (...requiredRoles: Role[]) => {
       throw new Error(verifiedToken.error);
     }
 
-    const { email, userId, role } = verifiedToken.data as JwtPayload;
+    const { userId, role } = verifiedToken.data as JwtPayload;
 
     if (requiredRoles.length && !requiredRoles.includes(role)) {
       throw new Error(

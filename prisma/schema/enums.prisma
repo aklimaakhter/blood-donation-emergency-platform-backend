@@ -32,6 +32,12 @@ enum BloodGroup {
   O_NEGATIVE // O-
 }
 
+enum UrgencyLevel {
+  HIGH
+  EMERGENCY
+  NORMAL
+}
+
 enum RequestStatus {
   PENDING
   APPROVED
