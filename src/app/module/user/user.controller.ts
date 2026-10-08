@@ -5,27 +5,63 @@ import { sendResponse } from "../../utils/sendResponse";
 import { UserServices } from "./user.service";
 import { AppError } from "../../utils/AppError";
 
+const getMyProfile = catchAsync(async (req: Request, res: Response) => {
+    const userId = (req as any).user?.userId;
+
+    if (!userId) {
+        throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access");
+    }
+
+    const result = await UserServices.getMyProfile(userId);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "User profile retrieved successfully",
+        data: result,
+    });
+});
+
+const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
+    const userId = (req as any).user?.userId;
+
+    if (!userId) {
+        throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access");
+    }
+
+    const result = await UserServices.updateMyProfile(userId, req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "User profile updated successfully",
+        data: result,
+    });
+});
+
 const uploadProfileImage = catchAsync(async (req: Request, res: Response) => {
-	if (!req.file) {
-		throw new AppError(httpStatus.BAD_REQUEST, "Please upload an image file");
-	}
+    if (!req.file) {
+        throw new AppError(httpStatus.BAD_REQUEST, "Please upload an image file");
+    }
 
-	const userId = (req as any).user?.userId;
+    const userId = (req as any).user?.userId;
 
-	if (!userId) {
-		throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access");
-	}
+    if (!userId) {
+        throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access");
+    }
 
-	const result = await UserServices.uploadProfileImage(req.file.buffer, userId);
+    const result = await UserServices.uploadProfileImage(req.file.buffer, userId);
 
-	sendResponse(res, {
-		statusCode: httpStatus.OK,
-		success: true,
-		message: "Profile image uploaded successfully",
-		data: result,
-	});
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Profile image uploaded successfully",
+        data: result,
+    });
 });
 
 export const UserController = {
-	uploadProfileImage,
+    getMyProfile,
+    updateMyProfile,
+    uploadProfileImage,
 };
