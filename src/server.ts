@@ -1,7 +1,7 @@
 import app from "./app";
 import { prisma } from "./app/lib/prisma";
 import config from "./app/config";
-import { seedTesterAdmin } from "./app/utils/seed";
+import { seedTesterAdmin, seedTesterDonor, seedTesterUser } from "./app/utils/seed";
 import { redisClient } from "./app/lib/redis";
 import { transporter } from "./app/lib/nodemailer";
 import { deleteRejectedDonors } from "./app/lib/cron";
@@ -20,6 +20,8 @@ async function main() {
 		console.log("Nodemailer connected successfully.");
 
 		await seedTesterAdmin();
+        await seedTesterDonor();
+        await seedTesterUser();
 
 		await deleteRejectedDonors();
 
