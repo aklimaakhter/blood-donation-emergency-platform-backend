@@ -1,30 +1,30 @@
-// import { createClient } from "redis";
-// import config from "../config";
-
-// export const redisClient = createClient({
-// 	username: config.redis_user,
-// 	password: config.redis_password,
-// 	socket: {
-// 		host: config.redis_host,
-// 		port: config.redis_port,
-// 	},
-// });
-
 import { createClient } from "redis";
 import config from "../config";
 
 export const redisClient = createClient({
 	username: config.redis_user,
 	password: config.redis_password,
-	pingInterval: 30000, 
 	socket: {
 		host: config.redis_host,
 		port: config.redis_port,
-		reconnectStrategy: (retries) => Math.min(retries * 200, 3000),
 	},
 });
 
+// import { createClient } from "redis";
+// import config from "../config";
 
-redisClient.on("error", (err) => {
-	console.error("Redis error:", err.message);
-});
+// export const redisClient = createClient({
+// 	username: config.redis_user,
+// 	password: config.redis_password,
+// 	pingInterval: 30000, 
+// 	socket: {
+// 		host: config.redis_host,
+// 		port: config.redis_port,
+// 		reconnectStrategy: (retries) => Math.min(retries * 200, 3000),
+// 	},
+// });
+
+
+// redisClient.on("error", (err) => {
+// 	console.error("Redis error:", err.message);
+// });
