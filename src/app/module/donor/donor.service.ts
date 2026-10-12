@@ -2,7 +2,7 @@ import path from "path";
 import ejs from "ejs";
 import {
 	type Donor,
-	DonorStatus,
+	
 	type Prisma,
 } from "../../../../generated/prisma/browser";
 import { prisma } from "../../lib/prisma";
@@ -14,6 +14,7 @@ import type {
 } from "./donor.interface";
 import config from "../../config";
 import { transporter } from "../../lib/nodemailer";
+import { DonorStatus } from "../../../../generated/prisma";
 
 const applyForDonor = async (
 	userId: string,

@@ -1,21 +1,18 @@
 model Payment {
   id                    String        @id @default(uuid())
-  userId                String
-  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  bloodRequestId        String?       
-  bloodRequest          BloodRequest? @relation(fields: [bloodRequestId], references: [id], onDelete: SetNull)
-
   amount                Decimal
   status                PaymentStatus @default(PENDING)
-  bkashPaymentId        String?       @unique
-  bkashTrxId            String?
-  payerReference        String?
-  merchantInvoiceNumber String        @unique
-  paidAt                DateTime?
-
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
+  bkashPaymentId        String?       @unique
+  bkashTrxId            String?
+  merchantInvoiceNumber String        @unique
+  payerReference        String?
+  userId                String
+  bloodRequestId        String?
+  paidAt                DateTime?
+  bloodRequest          BloodRequest? @relation(fields: [bloodRequestId], references: [id])
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("payments")
 }

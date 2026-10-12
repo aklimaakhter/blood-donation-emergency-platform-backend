@@ -28,6 +28,7 @@ import type {
 } from "./auth.interface";
 
 const registerUser = async (payload: IRegisterUserPayload) => {
+	
 	const { name, password } = payload;
 	const email = payload.email.trim().toLowerCase();
 

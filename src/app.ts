@@ -34,7 +34,7 @@ app.use(cookieParser());
 app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/user", UserRoutes);
 app.use("/api/v1/donor", DonorRoutes);
-app.use("/api/v1/blood-request", BloodRequestRoutes);
+app.use("/api/v1/blood-requests", BloodRequestRoutes);
 app.use("/api/v1/payments", PaymentRoutes);
 app.use("/api/v1/review", ReviewRoutes);
 app.use("/api/v1/admin", AdminRoutes);

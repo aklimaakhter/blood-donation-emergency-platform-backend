@@ -1,31 +1,25 @@
 model User {
-  id                 String     @id @default(uuid())
+  id                 String         @id @default(uuid())
   name               String
-  email              String     @unique
+  email              String         @unique
   password           String?
-  googleId           String?     @unique
-  authProvider       AuthProvider @default(CREDENTIAL)
   phoneNumber        String?
-  role               Role       @default(USER)
-  status             UserStatus @default(ACTIVE)
-  emailVerified      Boolean    @default(false)
-  needPasswordChange Boolean    @default(false)
-  imageUrl           String     @default("")
-  imagePublicId      String     @default("")
-  isDeleted          Boolean    @default(false)
+  role               Role           @default(USER)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  status             UserStatus     @default(ACTIVE)
+  emailVerified      Boolean        @default(false)
   deletedAt          DateTime?
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-
-  donorProfile  Donor?
-  bloodRequests BloodRequest[] @relation("UserBloodRequests")
-  payments      Payment[]
-  reviews       Review[]
+  imagePublicId      String         @default("")
+  imageUrl           String         @default("")
+  isDeleted          Boolean        @default(false)
+  needPasswordChange Boolean        @default(false)
+  authProvider       AuthProvider   @default(CREDENTIAL)
+  googleId           String?        @unique
+  bloodRequests      BloodRequest[] @relation("UserBloodRequests")
+  donorProfile       Donor?
+  payments           Payment[]
+  reviews            Review[]
 
   @@map("users")
 }
-
-
-
-
-

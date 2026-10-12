@@ -1,32 +1,24 @@
 model BloodRequest {
-  id              String         @id @default(uuid())
+  id              String        @id @default(uuid())
   requesterId     String
-  requester       User           @relation("UserBloodRequests", fields: [requesterId], references: [id], onDelete: Cascade)
-  
-  donorId         String?
-  donor           Donor?         @relation(fields: [donorId], references: [id], onDelete: SetNull)
-
   patientName     String
   bloodGroup      BloodGroup
-  
-  district        String
-  area            String
   hospitalName    String
   hospitalAddress String
-  
-  bagsNeeded      Int            @default(1)
-  urgency         UrgencyLevel   @default(NORMAL) 
-  status          RequestStatus  @default(PENDING)
-  
+  bagsNeeded      Int           @default(1)
+  status          RequestStatus @default(PENDING)
   dateOfDonation  DateTime
   contactNumber   String
-  reason          String?   
-
-  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  area            String
+  district        String
+  donorId         String?
+  reason          String?
+  urgency         UrgencyLevel  @default(NORMAL)
+  donor           Donor?        @relation(fields: [donorId], references: [id])
+  requester       User          @relation("UserBloodRequests", fields: [requesterId], references: [id], onDelete: Cascade)
   payments        Payment[]
-
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
 
   @@map("blood_requests")
 }
