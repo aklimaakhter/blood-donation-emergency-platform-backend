@@ -14,7 +14,8 @@ import type {
 } from "./donor.interface";
 import config from "../../config";
 import { transporter } from "../../lib/nodemailer";
-import { DonorStatus } from "../../../../generated/prisma";
+import { DonorStatus } from "../../../../generated/prisma/enums";
+
 
 const applyForDonor = async (
 	userId: string,
