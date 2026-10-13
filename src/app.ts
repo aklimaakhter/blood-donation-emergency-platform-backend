@@ -31,6 +31,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+app.get("/api/v1/health", (_req, res) => {
+	res.json({ ok: true, build: "2026-10-13-b", routes: ["user", "blood-requests"] });
+});
+
 app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/user", UserRoutes);
 app.use("/api/v1/donor", DonorRoutes);
