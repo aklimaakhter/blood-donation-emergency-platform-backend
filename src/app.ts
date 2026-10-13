@@ -43,6 +43,14 @@ app.get("/", async (req: Request, res: Response) => {
 	res.status(httpStatus.OK).json({
 		success: true,
 		message: "Welcome to Blood Donation & Emergency Platform Backend",
+		commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? "local",
+	});
+});
+
+app.get("/", async (req: Request, res: Response) => {
+	res.status(httpStatus.OK).json({
+		success: true,
+		message: "Welcome to Blood Donation & Emergency Platform Backend",
 	});
 });
 
