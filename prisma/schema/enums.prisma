@@ -51,3 +51,9 @@ enum PaymentStatus {
   FAILED
   CANCELLED
 }
+
+enum DonationStatus {
+  PENDING
+  PAID
+  FAILED
+}

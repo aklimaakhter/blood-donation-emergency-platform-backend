@@ -5,16 +5,16 @@
   "type": "module",
   "main": "server.ts",
   "scripts": {
-  "seed": "tsx src/app/utils/seed.ts",
-  "dev": "tsx watch src/server.ts",
-  "build": "prisma generate && tsup src/index.ts --format esm --platform node --target node20 --outDir api --external pg-native",
-  "postinstall": "prisma generate",
-  "vercel-build": "prisma generate && tsup",
-  "start": "node dist/server.js",
-  "format:check": "npx @biomejs/biome format ./src",
-  "format:fix": "npx @biomejs/biome format --write ./src",
-  "lint:check": "npx @biomejs/biome lint ./src",
-  "lint:fix": "npx @biomejs/biome lint --write ./src"
+    "seed": "tsx src/app/utils/seed.ts",
+    "dev": "tsx watch src/server.ts",
+    "build": "prisma generate && tsup src/index.ts --format esm --platform node --target node20 --outDir api --external pg-native",
+    "postinstall": "prisma generate",
+    "vercel-build": "prisma generate && tsup",
+    "start": "node dist/server.js",
+    "format:check": "npx @biomejs/biome format ./src",
+    "format:fix": "npx @biomejs/biome format --write ./src",
+    "lint:check": "npx @biomejs/biome lint ./src",
+    "lint:fix": "npx @biomejs/biome lint --write ./src"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
@@ -48,6 +48,7 @@
     "nodemailer": "^10.0.14",
     "pg": "^8.23.0",
     "redis": "^6.3.0",
+    "stripe": "^23.0.0",
     "tsup": "^8.5.1",
     "zod": "^4.6.5"
   }

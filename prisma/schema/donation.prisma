@@ -1,0 +1,12 @@
+model Donation {
+  id              String         @id @default(uuid())
+  userId          String
+  amount          Int
+  currency        String         @default("BDT")
+  status          DonationStatus @default(PENDING)
+  stripeSessionId String         @unique
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([userId])
+}
