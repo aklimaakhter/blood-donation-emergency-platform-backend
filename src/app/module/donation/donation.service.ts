@@ -1,14 +1,16 @@
 import httpStatus from "http-status";
 import config from "../../config";
 import { prisma } from "../../lib/prisma";
-import { stripe } from "../../lib/stripe";
+
 import { AppError } from "../../utils/AppError";
 import { DonationStatus } from "../../../../generated/prisma/enums";
+import Stripe from "stripe";
+import { getStripe } from "../../lib/stripe";
 
 const createCheckout = async (userId: string, amountBdt: number) => {
 	const amount = Math.round(amountBdt * 100);
 
-	const session = await stripe.checkout.sessions.create({
+	const session = await getStripe().checkout.sessions.create({
 		mode: "payment",
 		line_items: [
 			{
@@ -43,7 +45,7 @@ const verify = async (userId: string, sessionId: string) => {
 
 	if (donation.status === DonationStatus.PAID) return donation;
 
-	const session = await stripe.checkout.sessions.retrieve(sessionId);
+	const session = await getStripe().checkout.sessions.retrieve(sessionId);
 
 	const status =
 		session.payment_status === "paid"

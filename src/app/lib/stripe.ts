@@ -1,4 +1,12 @@
 import Stripe from "stripe";
 import config from "../config";
 
-export const stripe = new Stripe(config.stripe_secret_key)
+let client: Stripe | null = null;
+
+export const getStripe = (): Stripe => {
+	if (!config.stripe_secret_key) {
+		throw new Error("STRIPE_SECRET_KEY is not configured");
+	}
+	client ??= new Stripe(config.stripe_secret_key);
+	return client;
+};
