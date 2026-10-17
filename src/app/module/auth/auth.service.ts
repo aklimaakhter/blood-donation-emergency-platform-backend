@@ -27,8 +27,16 @@ import type {
 	IVerifyUserPayload,
 } from "./auth.interface";
 
+const ensureRedis = async () => {
+	if (!redisClient.isOpen) {
+		await redisClient.connect();
+	}
+};
+
+redisClient.on("error", (error) => console.error("Redis error:", error.message));
+
 const registerUser = async (payload: IRegisterUserPayload) => {
-	
+	await ensureRedis();
 	const { name, password } = payload;
 	const email = payload.email.trim().toLowerCase();
 
@@ -93,6 +101,7 @@ const registerUser = async (payload: IRegisterUserPayload) => {
 };
 
 const verifyUserEmail = async (payload: IVerifyUserPayload) => {
+	await ensureRedis();
 	const otp = payload.otp;
 	const email = payload.email.trim().toLowerCase();
 
@@ -415,6 +424,7 @@ const googleLogin = async (payload: IGoogleLoginPayload) => {
 };
 
 const forgotPassword = async (payload: IForgotPasswordPayload) => {
+	await ensureRedis();
 	const { email } = payload;
 
 	const isUserExists = await prisma.user.findUnique({
@@ -473,6 +483,7 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
 };
 
 const resetPassword = async (payload: IResetPasswordPayload) => {
+	await ensureRedis();
 	const { email, newPassword, otp } = payload;
 
 	const isUserExists = await prisma.user.findUnique({
